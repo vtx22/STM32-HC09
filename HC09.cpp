@@ -5,7 +5,6 @@ uint32_t HC09::get_module_baud_rate()
     const uint32_t rates_to_test[] = {4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600};
 
     const char *at_msg = "AT";
-    char at_response[2] = {0};
 
     for (const auto &baud_rate : rates_to_test)
     {
