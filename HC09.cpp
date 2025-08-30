@@ -28,7 +28,22 @@ uint32_t HC09::get_module_baud_rate()
     return 0;
 }
 
-void HC09::send_command_string(const char *command)
+bool HC09::send_command_string(const char *command)
 {
-    HAL_UART_Transmit(_huart, (uint8_t *)command, strlen(command), 100);
+    return send_command_string(command, true);
+}
+
+bool HC09::send_command_string(const char *command, bool check_response)
+{
+    HAL_UART_Transmit(_huart, (uint8_t *)command, strlen(command), HAL_MAX_DELAY);
+
+    if (!check_response)
+    {
+        return false;
+    }
+
+    uint8_t response[2] = {0};
+    HAL_UART_Receive(_huart, response, 2, HAL_MAX_DELAY);
+
+    return (response[0] == '0' && response[1] == 'K');
 }

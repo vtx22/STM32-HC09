@@ -28,7 +28,9 @@ public:
     HC09(UART_HandleTypeDef *huart) : _huart(huart) {};
 
     uint32_t get_module_baud_rate();
-    void send_command_string(const char *command);
+
+    bool send_command_string(const char *command);
+    bool send_command_string(const char *command, bool check_response);
 
 private:
     UART_HandleTypeDef *_huart;
