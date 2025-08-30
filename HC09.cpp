@@ -4,7 +4,7 @@ uint32_t HC09::get_module_baud_rate()
 {
     const uint32_t rates_to_test[] = {4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600};
 
-    const char *at_msg = "AT";
+    const uint8_t at_msg[2] = {'A', 'T'};
 
     for (const auto &baud_rate : rates_to_test)
     {
@@ -12,15 +12,17 @@ uint32_t HC09::get_module_baud_rate()
         _huart->Init.BaudRate = baud_rate;
         HAL_UART_Init(_huart);
 
-        HAL_UART_Transmit(_huart, (uint8_t *)at_msg, 2, 100);
+        HAL_UART_Transmit(_huart, at_msg, 2, HAL_MAX_DELAY);
 
-        char at_response[2] = {0};
-        HAL_UART_Receive(_huart, (uint8_t *)at_response, 2, 100);
+        uint8_t at_response[2] = {0, 0};
+        HAL_UART_Receive(_huart, at_response, 2, 2000);
 
         if (at_response[0] == 'O' && at_response[1] == 'K')
         {
             return baud_rate;
         }
+
+        HAL_Delay(100);
     }
 
     return 0;
